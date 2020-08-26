@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+		<meta charset="utf-8" />
+		<title>명보 시네마 | 예매 하기</title>
+		<link rel="stylesheet" type="text/css" href="style-size.css" />
+		<link rel="stylesheet" type="text/css" href="style-layout.css" />
+		<link rel="stylesheet" type="text/css" href="style-presentation.css" />
+	</head>
+
+	<body id="book">
+        <div class="runningfilm_info">
+            <div class="head"> 현재 상영작 </div> <br>    
+            <ul>
+                <li>
+                    <img src="images/온워드.jpg"/>
+                    <p class = "runningfilms" onclick = "Timelist('Onward');">
+                        마법이 사라진 세상에 살고 있는 취향과 성격 모두 정반대의 두 형제.
+                        <br><br>
+                        ‘이안’은 태어나서 얼굴도 본 적 없는 아빠를 그리워하던 중, 서프라이즈 생일 선물로
+                        아빠의 마법 지팡이를 받게 된다. 그러나 실수로, 아빠의 반쪽만 소환시키는 위기가 발생하는데!!</p>
+                </li>
+                <li>
+                    <img src="images/사라진시간.jpg"/>
+                    <p class = "runningfilms" onclick = "Timelist('Meandme');">
+                        한적한 소도시의 시골마을, 외지인 부부가 의문의 화재 사고로 사망하는 사건이 발생한다.<br><br>
+                        사건 수사를 담당하게 된 형구의 집도, 가족도, 직업도 내가 알던 모든 것이 사라졌다.</p>
+                </li>
+                <li>
+                    <img src="images/결백.jpg"/>
+                    <p class= "runningfilms" onclick = "Timelist('Innocence');">
+                        아빠의 장례식장에서 벌어진 막걸리 농약 살인사건<br><br>
+                        기억을 잃은 채 살인사건의 용의자로 몰린 엄마 '화자'(배종옥)의 결백을 밝히려는 변호사 '정인'(신혜선)이 추악한 진실을 파헤쳐가는 무죄 입증 추적극</p>
+                </li>
+                <li>
+                    <img src="images/겨울여자.jpg"/>
+                    <p class = "runningfilms" onclick = "Timelist('Winterwoman');">
+                        이화에게 정체 모를 남자로부터 편지가 온다. <br><br>
+                        정체 모를 남자의 편지는 계속 이어지고, 이화는 편지의 발송인이 과연 누구일까 은근한 호기심이 생긴다.<br><br> 
+                        이화가 대학에 합격한 날, 드디어 남자가 나타난다.</p>
+                </li>
+                <li>
+                    <img src="images/쉬리.jpg"/>
+                    <p class = "runningfilms" onclick = "Timelist('Swiri');">
+                        국가 비밀기관 OP의 특수요원인 중원(한석규)과 장길(송강호)은 암살 사건을 수사한다. <br><br>
+                        북에서는 이방희의 특수교관이었던 박무영(최민식)이 북한 특수 8군단과 함께 내려오고 유중원과 이장길은 암살이 국방부에서 개발한 CTX와 관련이 있다는 사실을 알게 된다.
+                </li>
+            </ul>
+
+        </div>
+
+        <br><br><br><br>
+		<p>관람을 원하시는 날짜와 시간을 알려 주세요. <br> 날짜 선택 후 상단 영화를 클릭하시면 영화별 시간 정보가 안내됩니다.</p>
+        <form action="" name = "MovieSelectForm" >
+            <input id = 'DateToWatch' type='date'/>
+            <input id = 'TimeToWatch' type='time' min="10:00" max="20:40" onchange="TimelistAll();"/>
+            <br><br>
+            <div id = 'Times'></div>
+
+			<div class="right">
+				<input type="reset" value="초기화" class="buttons" />
+				<input type="button" value="예매하기" onclick="CV();" class="buttons"/>
+			</div>
+        </form>
+        
+
+        <script type="text/javascript">
+            // 영화 객체 생성하는 함수 Movie
+            function Movie(title_value, date_value, time_value, showtimes_value) {
+                this.title = title_value;
+                this.date = date_value;
+                this.time = time_value;
+                this.showtimes = showtimes_value;
+                this.totalseats = new Array();
+                this.leftseats = new Array();
+            }
+
+            // 날짜 선택 오늘부터 일주일간
+            var today = new Date().toISOString().split('T')[0];
+            var nextWeekDate = new Date(new Date().getTime() + 6 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            document.getElementById('DateToWatch').setAttribute('min', today);
+            document.getElementById('DateToWatch').setAttribute('max', nextWeekDate);
+            document.getElementById('DateToWatch').value = today;
+            // 시간 선택
+            var now = new Date().getHours()+':'+new Date().getMinutes();
+            document.getElementById('TimeToWatch').value = now;
+
+            // 영화 객체에 넣을 date 배열
+            var dateArr = new Array();
+            for (i=0; i<7; i++){
+                dateArr[i] = new Date(new Date().getTime() + i * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            }
+
+            // 영화 객체 생성           
+            var Onward = new Movie('온워드', dateArr, ['3관 10:30', '1관 12:10', '1관 14:10', '3관 16:30'], 107),
+            Innocence = new Movie('결백', dateArr, ['1관 10:10', '3관 12:30', '3관 14:30', '1관 16:10', '3관 18:30'], 111),
+            Meandme = new Movie('사라진 시간', dateArr, ['2관 10:20', '2관 12:20', '2관 14:20', '2관 16:20', '3관 20:30'], 105),
+            Winterwoman = new Movie('겨울여자', [dateArr[0], dateArr[1]], ['1관 18:10', '1관 20:20'], 116),
+            Swiri = new Movie('쉬리', [dateArr[0], dateArr[1]], ['2관 18:20', '2관 20:40'], 125);
+            
+            var RunningMovies = new Array();
+            RunningMovies = [Onward, Innocence, Meandme, Winterwoman, Swiri];
+
+            
+            // 상영관 마다 전체 좌석 수 세팅
+            function makeTotalseats(object){
+                for(i=0; i<object.time.length; i++){
+                    if (object.time[i].split(' ')[0] == '3관'){
+                        object.totalseats[i] = 98;
+                        object.leftseats[i] = 98;
+                    }
+                    else {
+                        object.totalseats[i] = 56;
+                        object.leftseats[i] = 56;
+                    }
+                }
+            }
+
+            /*
+            function makeTotalseats(object){
+                var ls = new Array();
+                for(i=0; i<object.time.length; i++){
+                    if (object.time[i].split(' ')[0] == '3관'){
+                        object.totalseats[i] = 98;
+                        for(j=0; j<object.time.length; j++){
+                            ls.push(98);
+                        object.leftseats.push = ls;
+                        console.log(ls);
+                        console.log(object.leftseats);
+                        }
+                        for(var i =0; i < localStorage.length; i++){
+                            var tmp = localStorage.getItem(localStorage.key(i));
+                            if (object.title == tmp.split('|')[1]){
+                                var d = dateArr.indexOf(tmp.split('|')[0]);
+                                if (d != -1) {
+                                    var t = object.time.indexof(tmp.split('|')[2]);
+                                    if(t != -1){
+                                        object.leftseats[d][t] -= tmp.split('|')[4];
+                                    }
+                                }
+                            }
+                        }
+                        
+                    }
+
+                    else {
+                        object.totalseats[i] = 56;
+                        for(j=0; j<object.time.length; j++){
+                            ls.push(56);
+                            object.leftseats[i] = ls;
+                        }
+                        for(var i =0; i < localStorage.length; i++){
+                            var tmp = localStorage.getItem(localStorage.key(i));
+                            if (object.title == tmp.split('|')[1]){
+                                var d = dateArr.indexOf(tmp.split('|')[0]);
+                                if (d != -1) {
+                                    var t = object.time.indexof(tmp.split('|')[2]);
+                                    if(t != -1){
+                                        object.leftseats[d][t] -= tmp.split('|')[4];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            */
+
+            for (var i in RunningMovies){
+                makeTotalseats(RunningMovies[i]);
+            }
+            /*
+            makeTotalseats(Onward);
+            makeTotalseats(Innocence);
+            makeTotalseats(Meandme);
+            makeTotalseats(Winterwoman);
+            makeTotalseats(Swiri);
+            */
+            
+            // 영화별 상영 시간
+            function Timelist(Movie_selected){
+                switch (Movie_selected){
+                    case 'Onward': Movie_selected = Onward; break;
+                    case 'Innocence': Movie_selected = Innocence; break;
+                    case 'Meandme' : Movie_selected = Meandme; break;
+                    case 'Winterwoman' : Movie_selected = Winterwoman; break;
+                    case 'Swiri': Movie_selected = Swiri; break;
+                }
+
+                // 선택한 영화가 선택한 날짜에 존재한다면
+                if (Movie_selected.date.includes(document.getElementById('DateToWatch').value)){
+                    document.getElementById("Times").innerHTML = "";
+                    //var show_dateArr = new Array(5);
+                    
+                    for (i=0; i<Movie_selected.time.length; i++){
+                        if (document.getElementById('TimeToWatch').value > Movie_selected.time[i].split(' ')[1]) ;
+                        else break;
+                    }
+                    for (i; i<Movie_selected.time.length; i++){
+                        //show_dateArr[i] = Movie_selected.title + "&nbsp; &nbsp; &nbsp; &nbsp;" + Movie_selected.time[i].split(' ')[1] + "&nbsp; &nbsp; &nbsp; &nbsp;" + Movie_selected.time[i].split(' ')[0] +"<br>";    
+                        document.getElementById("Times").innerHTML = document.getElementById("Times").innerHTML + Movie_selected.title + "&nbsp; &nbsp; &nbsp; &nbsp;" + Movie_selected.time[i].split(' ')[1] + "&nbsp; &nbsp; &nbsp; &nbsp;" + Movie_selected.time[i].split(' ')[0] + "&nbsp; &nbsp; &nbsp; &nbsp;" +'<input type = "radio" value = "' + document.getElementById('DateToWatch').value + '|'+ Movie_selected.title + '|'+ Movie_selected.time[i].split(' ')[1] +'|' + Movie_selected.time[i].split(' ')[0] + '" name = "Movie_selected" > <br>';                   
+                    }
+                    //document.getElementById("Times").innerHTML = show_dateArr.join('<br>') + "";
+                }
+                else {
+                    alert('선택하신 영화의 해당 날짜 상영 정보가 없습니다.');
+                }
+            }
+
+            // 날짜별 영화 상영 시간
+            function TimelistAll(){
+                document.getElementById("Times").innerHTML = "";
+                for (var M in RunningMovies){
+                    // 선택한 영화가 선택한 날짜에 존재한다면
+                    if (RunningMovies[M].date.includes(document.getElementById('DateToWatch').value)){              
+                        for (i=0; i<RunningMovies[M].time.length; i++){
+                            if (document.getElementById('TimeToWatch').value > RunningMovies[M].time[i].split(' ')[1]) ;
+                            else break;
+                        }
+                        for (i; i<RunningMovies[M].time.length; i++){
+                            document.getElementById("Times").innerHTML = document.getElementById("Times").innerHTML + RunningMovies[M].title + "&nbsp; &nbsp; &nbsp; &nbsp;" + RunningMovies[M].time[i].split(' ')[1] + "&nbsp; &nbsp; &nbsp; &nbsp;" + RunningMovies[M].time[i].split(' ')[0] + "&nbsp; &nbsp; &nbsp; &nbsp;" + '<input type = "radio" value = "' + document.getElementById('DateToWatch').value + '|' + RunningMovies[M].title + '|' + RunningMovies[M].time[i].split(' ')[1] + '|' + RunningMovies[M].time[i].split(' ')[0] + '" name = "Movie_selected" > <br>';                   
+                        }
+                    }
+                }
+            }
+
+            var SelectCount = 0;
+            var Letter;
+            var finalSeat = new Array();
+            
+            // CheckValidation. if validate, 좌석 선택
+            function CV(){
+                if (MovieSelectForm.Movie_selected){
+                    if (MovieSelectForm.Movie_selected.value  == ""){
+                        alert("관람을 원하시는 영화를 선택해주세요.");
+                        return;
+                    }
+                    else {
+                        //var Result = new Array();
+                        var finalDate = MovieSelectForm.Movie_selected.value.split('|')[0];
+                        var finalTitle = MovieSelectForm.Movie_selected.value.split('|')[1];
+                        var finalTime = MovieSelectForm.Movie_selected.value.split('|')[2];
+                        var finalSpace = MovieSelectForm.Movie_selected.value.split('|')[3];
+                        //Result = [finalDate, finalTitle, finalTime, finalSpace];
+                        document.getElementById("book").innerHTML = "";
+                        document.write('<div id = "bookingseats" style="text-align:center;">');
+                        document.write('<h3>'+finalTitle+'</h3>');
+                        document.write('<h4>'+finalDate+ '&nbsp&nbsp'+ finalTime + '&nbsp&nbsp'+finalSpace+ '</h4>');
+                        console.log(SelectCount);
+                        if (finalTime < '11:00') {
+                            document.write('조조(6000원):&nbsp');
+                            var money = 6000;
+                        }
+                        else {
+                            document.write('일반(8000원):&nbsp');
+                            var money = 8000;
+                        }
+                        document.write('<select id = "attendance" name = "attendance"> <option value="1" selected> 1명 </option> <option value="2" > 2명 </option><option value="3" > 3명 </option><option value="4" > 4명 </option> </select><br>');
+                        document.write('<small>선택한 인원대로 연속된 좌석을 선택할 수 있습니다. <br>연속된 좌석이 없는 경우 인원을 변경해서 추가 선택해주세요.</small><br><br>')
+                        var attendance =1;
+                        document.getElementById('attendance').addEventListener('change', function(){
+                            attendance = document.getElementById("attendance").value;
+                        });
+                        document.write('스크린 <br>');
+                        
+                        
+                        if ((finalSpace == '1관') || (finalSpace == '2관')){         
+                            document.write('<table border="1" style="margin:auto; width:250px; height:150px; text-align:center; border-radius:10px; border-spacing:10px;">')
+                                
+                            for (i = 1; i < 7; i++) {
+                                switch(i) {
+                                    case 1 : Letter = 'A'; break;
+                                    case 2 : Letter = 'B'; break;
+                                    case 3 : Letter = 'C'; break;
+                                    case 4 : Letter = 'D'; break;
+                                    case 5 : Letter = 'E'; break;
+                                    case 6 : Letter = 'F'; break;
+                                    case 7 : Letter = 'G'; break;
+                                }
+                                document.write("<tr>")
+
+                                for (j = 1; j < 7; j++) {
+                                    document.write('<td style = "border-radius:10px;" id="'+ Letter + j + '">' + Letter + j + ' </td>');
+                                    document.getElementById(Letter+j).addEventListener('click', function(){
+                                        SeatOnClick(this.id, attendance, finalSpace);
+                                    });
+                                    document.getElementById(Letter+j).addEventListener('mouseover', function(){
+                                        SeatOnMouse(this.id, attendance, finalSpace);
+                                    });
+                                    document.getElementById(Letter+j).addEventListener('mouseout', function(){
+                                        SeatOffMouse(this.id, attendance, finalSpace);
+                                    });
+                                }
+
+                                document.write('<td>&nbsp&nbsp&nbsp&nbsp</td>');
+
+                                if (Letter == 'C'){
+                                    document.write('<td colspan="5" rowspan="2" style = "border-radius:10px;"> </td>');
+                                }
+                                else if (Letter == 'D') {}
+                                else {
+                                    for (j = 7; j < 12; j++) {
+                                        document.write('<td style = "border-radius:10px;" id="'+ Letter + j + '">' + Letter + j + ' </td>');
+                                        document.getElementById(Letter+j).addEventListener('click', function(){
+                                            SeatOnClick(this.id, attendance,finalSpace);
+                                        });
+                                        document.getElementById(Letter+j).addEventListener('mouseover', function(){
+                                            SeatOnMouse(this.id, attendance,finalSpace);
+                                        });
+                                        document.getElementById(Letter+j).addEventListener('mouseout', function(){
+                                            SeatOffMouse(this.id, attendance,finalSpace);
+                                        });
+                                        }
+                                }
+
+                                document.write("</tr>");
+                            }
+
+                            document.write("</table>");
+
+                            for(var i =0; i < localStorage.length; i++){
+                                var tmp = localStorage.getItem(localStorage.key(i));
+                                //console.log(tmp, finalDate == tmp.split('|')[0]);
+                                //console.log(finalTitle == tmp.split('|')[1]);
+                                //console.log(finalTime == tmp.split('|')[2]);
+
+                                if (finalDate == tmp.split('|')[0]){
+                                    if (finalTitle == tmp.split('|')[1]) {
+                                        if (finalTime == tmp.split('|')[2]){
+                                            b = tmp.split('|')[5].split(' ');
+                                            for (var j=0; j <b.length-1; j++){
+                                                document.getElementById(b[j]).style.backgroundColor = 'grey';
+                                            }
+                                        }
+                                    }
+                                }
+                                    
+                            }
+                            document.write('<br><br><input type="button" class="buttons" id = "BOOKING" value="예매하기" />');
+                            document.getElementById('BOOKING').addEventListener('click', function(){
+                                finalbooking(finalDate, finalTitle, finalTime, finalSpace, attendance, money);
+                            });
+                            document.write('</div>');
+                        }
+
+                        else {         
+                            document.write('<table border="1" style="margin:auto; width:250px; height:150px; text-align:center; border-radius:10px; border-spacing:10px;">')
+                                
+                            for (i = 1; i < 8; i++) {
+                                switch(i) {
+                                    case 1 : Letter = 'A'; break;
+                                    case 2 : Letter = 'B'; break;
+                                    case 3 : Letter = 'C'; break;
+                                    case 4 : Letter = ''; break;
+                                    case 5 : Letter = 'D'; break;
+                                    case 6 : Letter = 'E'; break;
+                                    case 7 : Letter = 'F'; break;
+                                    case 8 : Letter = 'G'; break;
+                                }
+                                if (Letter == ''){
+                                    document.write('<tr colspan="20"></tr>');
+                                }
+                                else{
+                                    document.write("<tr>")
+
+                                    for (j = 1; j < 5; j++) {
+                                        document.write('<td style = "border-radius:10px;" id="'+ Letter + j + '">' + Letter + j + ' </td>');
+                                        document.getElementById(Letter+j).addEventListener('click', function(){
+                                            SeatOnClick(this.id, attendance,finalSpace);
+                                        });
+                                        document.getElementById(Letter+j).addEventListener('mouseover', function(){
+                                            SeatOnMouse(this.id, attendance,finalSpace);
+                                        });
+                                        document.getElementById(Letter+j).addEventListener('mouseout', function(){
+                                            SeatOffMouse(this.id, attendance,finalSpace);
+                                        });
+                                    }
+
+                                    document.write('<td>&nbsp&nbsp&nbsp&nbsp</td>');
+                                    for (j = 5; j < 11; j++) {
+                                        document.write('<td style = "border-radius:10px;" id="'+ Letter + j + '">' + Letter + j + ' </td>');
+                                        document.getElementById(Letter+j).addEventListener('click', function(){
+                                            SeatOnClick(this.id, attendance,finalSpace);
+                                        });
+                                        document.getElementById(Letter+j).addEventListener('mouseover', function(){
+                                            SeatOnMouse(this.id, attendance,finalSpace);
+                                        });
+                                        document.getElementById(Letter+j).addEventListener('mouseout', function(){
+                                            SeatOffMouse(this.id, attendance,finalSpace);
+                                        });
+                                    }
+                                    document.write('<td>&nbsp&nbsp&nbsp&nbsp</td>');
+                                    for (j = 11; j < 15; j++) {
+                                        document.write('<td style = "border-radius:10px;" id="'+ Letter + j + '">' + Letter + j + ' </td>');
+                                        document.getElementById(Letter+j).addEventListener('click', function(){
+                                            SeatOnClick(this.id, attendance,finalSpace);
+                                        });
+                                        document.getElementById(Letter+j).addEventListener('mouseover', function(){
+                                            SeatOnMouse(this.id, attendance,finalSpace);
+                                        });
+                                        document.getElementById(Letter+j).addEventListener('mouseout', function(){
+                                            SeatOffMouse(this.id, attendance,finalSpace);
+                                        });
+                                    }
+                                    document.write("</tr>");
+                                }
+                            }
+
+                            document.write("</table>");
+
+                            for(var i =0; i < localStorage.length; i++){
+                                var tmp = localStorage.getItem(localStorage.key(i));
+                                //console.log(tmp, finalDate == tmp.split('|')[0]);
+                                //console.log(finalTitle == tmp.split('|')[1]);
+                                //console.log(finalTime == tmp.split('|')[2]);
+
+                                if (finalDate == tmp.split('|')[0]){
+                                    if (finalTitle == tmp.split('|')[1]) {
+                                        if (finalTime == tmp.split('|')[2]){
+                                            b = tmp.split('|')[5].split(' ');
+                                            for (var j=0; j <b.length-1; j++){
+                                                document.getElementById(b[j]).style.backgroundColor = 'grey';
+                                            }
+                                        }
+                                    }
+                                }
+                                    
+                            }
+
+                            document.write('<br><br><input type="button" class="buttons" id = "BOOKING" value="예매하기" />');
+                            document.getElementById('BOOKING').addEventListener('click', function(){
+                                finalbooking(finalDate, finalTitle, finalTime, finalSpace, attendance, money);
+                            });
+                            document.write('</div>');
+                        }
+                        return ;
+                    }
+                }
+                else {
+                    alert("관람을 원하시는 영화를 선택해주세요.");
+                    return ;
+                }
+            }
+
+            function SeatOnMouse(id, n, space){
+                var letter = id.charAt(0);
+                if (id.length == 2){
+                    var lastnumber = id.charAt(id.length-1) * 1;
+                }
+                else var lastnumber = id.substr(id.length-2) * 1;
+
+                if ((space == '1관') || (space == '2관')){
+                    if (n==1){
+                    if (document.getElementById(id).style.backgroundColor == 'green') ;
+                    else if (document.getElementById(id).style.backgroundColor == 'grey') ;
+                    else {
+                        document.getElementById(id).style.backgroundColor = 'black';
+                    }
+                    }
+                    else if (n==2){
+                        if (lastnumber % 2 == 1){
+                            if (lastnumber == 11){
+                                var id2 = letter + (lastnumber -1);
+                            }
+                            else var id2 = letter + (lastnumber+1);
+                        }
+                        else{
+                            var id2 = letter + (lastnumber-1);
+                        }
+                        if ((document.getElementById(id).style.backgroundColor == 'green') || (document.getElementById(id2).style.backgroundColor == 'green')) ;
+                        else if ((document.getElementById(id).style.backgroundColor == 'grey') || (document.getElementById(id2).style.backgroundColor == 'grey')) ;
+                        else {
+                            document.getElementById(id).style.backgroundColor = 'black';
+                            document.getElementById(id2).style.backgroundColor = 'black';
+                        }
+                    }
+
+                    else if (n==3){
+                        if (lastnumber < 4){
+                            if((document.getElementById(letter+1).style.backgroundColor == 'green')|| (document.getElementById(letter+2).style.backgroundColor == 'green')||(document.getElementById(letter+3).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+1).style.backgroundColor == 'grey')|| (document.getElementById(letter+2).style.backgroundColor == 'grey')||(document.getElementById(letter+3).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+1).style.backgroundColor = 'black';
+                                document.getElementById(letter+2).style.backgroundColor = 'black';
+                                document.getElementById(letter+3).style.backgroundColor = 'black';
+                            }
+                        }
+                        else if (lastnumber < 7){
+                            if((document.getElementById(letter+4).style.backgroundColor == 'green')|| (document.getElementById(letter+5).style.backgroundColor == 'green')||(document.getElementById(letter+6).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+4).style.backgroundColor == 'grey')|| (document.getElementById(letter+5).style.backgroundColor == 'grey')||(document.getElementById(letter+6).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+4).style.backgroundColor = 'black';
+                                document.getElementById(letter+5).style.backgroundColor = 'black';
+                                document.getElementById(letter+6).style.backgroundColor = 'black';
+                            }
+                        }
+                        else if (lastnumber < 10){
+                            if((document.getElementById(letter+7).style.backgroundColor == 'green')|| (document.getElementById(letter+8).style.backgroundColor == 'green')||(document.getElementById(letter+9).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+7).style.backgroundColor == 'grey')|| (document.getElementById(letter+8).style.backgroundColor == 'grey')||(document.getElementById(letter+9).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+7).style.backgroundColor = 'black';
+                                document.getElementById(letter+8).style.backgroundColor = 'black';
+                                document.getElementById(letter+9).style.backgroundColor = 'black';
+                            }
+                        }
+                        else {
+                            if((document.getElementById(letter+9).style.backgroundColor == 'green')|| (document.getElementById(letter+10).style.backgroundColor == 'green')||(document.getElementById(letter+11).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+9).style.backgroundColor == 'grey')|| (document.getElementById(letter+11).style.backgroundColor == 'grey')||(document.getElementById(letter+11).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+9).style.backgroundColor = 'black';
+                                document.getElementById(letter+10).style.backgroundColor = 'black';
+                                document.getElementById(letter+11).style.backgroundColor = 'black';
+                            }
+                        }
+                    }
+
+                    else{
+                        if(lastnumber < 3){
+                            if((document.getElementById(letter+1).style.backgroundColor == 'green')|| (document.getElementById(letter+2).style.backgroundColor == 'green')||(document.getElementById(letter+3).style.backgroundColor == 'green')||(document.getElementById(letter+4).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+1).style.backgroundColor == 'grey')|| (document.getElementById(letter+2).style.backgroundColor == 'grey')||(document.getElementById(letter+3).style.backgroundColor == 'grey')||(document.getElementById(letter+4).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+1).style.backgroundColor = 'black';
+                                document.getElementById(letter+2).style.backgroundColor = 'black';
+                                document.getElementById(letter+3).style.backgroundColor = 'black';
+                                document.getElementById(letter+4).style.backgroundColor = 'black';
+                            }
+                        }
+                        else if (lastnumber < 7){
+                            if((document.getElementById(letter+3).style.backgroundColor == 'green')|| (document.getElementById(letter+4).style.backgroundColor == 'green')||(document.getElementById(letter+5).style.backgroundColor == 'green')||(document.getElementById(letter+6).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+3).style.backgroundColor == 'grey')|| (document.getElementById(letter+4).style.backgroundColor == 'grey')||(document.getElementById(letter+5).style.backgroundColor == 'grey')||(document.getElementById(letter+6).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+3).style.backgroundColor = 'black';
+                                document.getElementById(letter+4).style.backgroundColor = 'black';
+                                document.getElementById(letter+5).style.backgroundColor = 'black';
+                                document.getElementById(letter+6).style.backgroundColor = 'black';
+                            }
+                        }
+                        else if (lastnumber == 7){
+                            if((document.getElementById(letter+7).style.backgroundColor == 'green')|| (document.getElementById(letter+8).style.backgroundColor == 'green')||(document.getElementById(letter+9).style.backgroundColor == 'green')||(document.getElementById(letter+10).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+7).style.backgroundColor == 'grey')|| (document.getElementById(letter+8).style.backgroundColor == 'grey')||(document.getElementById(letter+9).style.backgroundColor == 'grey')||(document.getElementById(letter+10).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+7).style.backgroundColor = 'black';
+                                document.getElementById(letter+8).style.backgroundColor = 'black';
+                                document.getElementById(letter+9).style.backgroundColor = 'black';
+                                document.getElementById(letter+10).style.backgroundColor = 'black';
+                            }
+                        }
+                        else {
+                            if((document.getElementById(letter+8).style.backgroundColor == 'green')|| (document.getElementById(letter+9).style.backgroundColor == 'green')||(document.getElementById(letter+10).style.backgroundColor == 'green')||(document.getElementById(letter+11).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+7).style.backgroundColor == 'grey')|| (document.getElementById(letter+8).style.backgroundColor == 'grey')||(document.getElementById(letter+9).style.backgroundColor == 'grey')||(document.getElementById(letter+10).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+11).style.backgroundColor = 'black';
+                                document.getElementById(letter+8).style.backgroundColor = 'black';
+                                document.getElementById(letter+9).style.backgroundColor = 'black';
+                                document.getElementById(letter+10).style.backgroundColor = 'black';
+                            }
+                        }
+                    }
+                }
+                else {
+                    if (n==1){
+                        if (document.getElementById(id).style.backgroundColor == 'green') ;
+                        else if (document.getElementById(id).style.backgroundColor == 'grey') ;
+                        else {
+                            document.getElementById(id).style.backgroundColor = 'black';
+                        }
+                    }
+                    else if (n==2){
+                        if (lastnumber % 2 == 1){
+                            var id2 = letter + (lastnumber+1);
+                        }
+                        else{
+                            var id2 = letter + (lastnumber-1);
+                        }
+                        if ((document.getElementById(id).style.backgroundColor == 'green') || (document.getElementById(id2).style.backgroundColor == 'green')) ;
+                        else if ((document.getElementById(id).style.backgroundColor == 'grey') || (document.getElementById(id2).style.backgroundColor == 'grey')) ;
+                        else {
+                            document.getElementById(id).style.backgroundColor = 'black';
+                            document.getElementById(id2).style.backgroundColor = 'black';
+                        }
+                    }
+
+                    else if (n==3){
+                        if (lastnumber == 1){
+                            if((document.getElementById(letter+1).style.backgroundColor == 'green')|| (document.getElementById(letter+2).style.backgroundColor == 'green')||(document.getElementById(letter+3).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+1).style.backgroundColor == 'grey')|| (document.getElementById(letter+2).style.backgroundColor == 'grey')||(document.getElementById(letter+3).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+1).style.backgroundColor = 'black';
+                                document.getElementById(letter+2).style.backgroundColor = 'black';
+                                document.getElementById(letter+3).style.backgroundColor = 'black';
+                            }
+                        }
+                        else if (lastnumber < 5){
+                            if((document.getElementById(letter+2).style.backgroundColor == 'green')|| (document.getElementById(letter+3).style.backgroundColor == 'green')||(document.getElementById(letter+4).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+2).style.backgroundColor == 'grey')|| (document.getElementById(letter+3).style.backgroundColor == 'grey')||(document.getElementById(letter+4).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+2).style.backgroundColor = 'black';
+                                document.getElementById(letter+3).style.backgroundColor = 'black';
+                                document.getElementById(letter+4).style.backgroundColor = 'black';
+                            }
+                        }
+                        else if (lastnumber < 8){
+                            if((document.getElementById(letter+5).style.backgroundColor == 'green')|| (document.getElementById(letter+6).style.backgroundColor == 'green')||(document.getElementById(letter+7).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+5).style.backgroundColor == 'grey')|| (document.getElementById(letter+6).style.backgroundColor == 'grey')||(document.getElementById(letter+7).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+7).style.backgroundColor = 'black';
+                                document.getElementById(letter+5).style.backgroundColor = 'black';
+                                document.getElementById(letter+6).style.backgroundColor = 'black';
+                            }
+                        }
+                        else if (lastnumber < 11){
+                            if((document.getElementById(letter+10).style.backgroundColor == 'green')|| (document.getElementById(letter+8).style.backgroundColor == 'green')||(document.getElementById(letter+9).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+10).style.backgroundColor == 'grey')|| (document.getElementById(letter+8).style.backgroundColor == 'grey')||(document.getElementById(letter+9).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+10).style.backgroundColor = 'black';
+                                document.getElementById(letter+8).style.backgroundColor = 'black';
+                                document.getElementById(letter+9).style.backgroundColor = 'black';
+                            }
+                        }
+                        else if (lastnumber < 14){
+                            if((document.getElementById(letter+11).style.backgroundColor == 'green')|| (document.getElementById(letter+12).style.backgroundColor == 'green')||(document.getElementById(letter+13).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+11).style.backgroundColor == 'grey')|| (document.getElementById(letter+12).style.backgroundColor == 'grey')||(document.getElementById(letter+13).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+12).style.backgroundColor = 'black';
+                                document.getElementById(letter+13).style.backgroundColor = 'black';
+                                document.getElementById(letter+11).style.backgroundColor = 'black';
+                            }
+                        }
+                        else{
+                            if((document.getElementById(letter+14).style.backgroundColor == 'green')|| (document.getElementById(letter+12).style.backgroundColor == 'green')||(document.getElementById(letter+13).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+14).style.backgroundColor == 'grey')|| (document.getElementById(letter+12).style.backgroundColor == 'grey')||(document.getElementById(letter+13).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+12).style.backgroundColor = 'black';
+                                document.getElementById(letter+13).style.backgroundColor = 'black';
+                                document.getElementById(letter+14).style.backgroundColor = 'black';
+                            }
+                        }
+                    }
+
+                    else{
+                        if(lastnumber < 5){
+                            if((document.getElementById(letter+1).style.backgroundColor == 'green')|| (document.getElementById(letter+2).style.backgroundColor == 'green')||(document.getElementById(letter+3).style.backgroundColor == 'green')||(document.getElementById(letter+4).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+1).style.backgroundColor == 'grey')|| (document.getElementById(letter+2).style.backgroundColor == 'grey')||(document.getElementById(letter+3).style.backgroundColor == 'grey')||(document.getElementById(letter+4).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+1).style.backgroundColor = 'black';
+                                document.getElementById(letter+2).style.backgroundColor = 'black';
+                                document.getElementById(letter+3).style.backgroundColor = 'black';
+                                document.getElementById(letter+4).style.backgroundColor = 'black';
+                            }
+                        }
+                        else if (lastnumber < 7){
+                            if((document.getElementById(letter+7).style.backgroundColor == 'green')|| (document.getElementById(letter+8).style.backgroundColor == 'green')||(document.getElementById(letter+5).style.backgroundColor == 'green')||(document.getElementById(letter+6).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+7).style.backgroundColor == 'grey')|| (document.getElementById(letter+8).style.backgroundColor == 'grey')||(document.getElementById(letter+5).style.backgroundColor == 'grey')||(document.getElementById(letter+6).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+7).style.backgroundColor = 'black';
+                                document.getElementById(letter+8).style.backgroundColor = 'black';
+                                document.getElementById(letter+5).style.backgroundColor = 'black';
+                                document.getElementById(letter+6).style.backgroundColor = 'black';
+                            }
+                        }
+                        else if (lastnumber < 11){
+                            if((document.getElementById(letter+7).style.backgroundColor == 'green')|| (document.getElementById(letter+8).style.backgroundColor == 'green')||(document.getElementById(letter+9).style.backgroundColor == 'green')||(document.getElementById(letter+10).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+7).style.backgroundColor == 'grey')|| (document.getElementById(letter+8).style.backgroundColor == 'grey')||(document.getElementById(letter+9).style.backgroundColor == 'grey')||(document.getElementById(letter+10).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+7).style.backgroundColor = 'black';
+                                document.getElementById(letter+8).style.backgroundColor = 'black';
+                                document.getElementById(letter+9).style.backgroundColor = 'black';
+                                document.getElementById(letter+10).style.backgroundColor = 'black';
+                            }
+                        }
+                        else {
+                            if((document.getElementById(letter+11).style.backgroundColor == 'green')|| (document.getElementById(letter+12).style.backgroundColor == 'green')||(document.getElementById(letter+13).style.backgroundColor == 'green')||(document.getElementById(letter+14).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+11).style.backgroundColor == 'grey')|| (document.getElementById(letter+12).style.backgroundColor == 'grey')||(document.getElementById(letter+13).style.backgroundColor == 'grey')||(document.getElementById(letter+14).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+11).style.backgroundColor = 'black';
+                                document.getElementById(letter+12).style.backgroundColor = 'black';
+                                document.getElementById(letter+13).style.backgroundColor = 'black';
+                                document.getElementById(letter+14).style.backgroundColor = 'black';
+                            }
+                        }
+                    }
+
+                }            
+                
+            }
+
+            function SeatOffMouse(id, n, space){
+                var letter = id.charAt(0);
+                if (id.length == 2){
+                    var lastnumber = id.charAt(id.length-1) * 1;
+                }
+                else var lastnumber = id.substr(id.length-2) * 1;
+
+                if ((space == '1관') || (space == '2관')){
+                    if (n==1){
+                        if (document.getElementById(id).style.backgroundColor == 'green') ;
+                        else if (document.getElementById(id).style.backgroundColor == 'grey') ;
+                        else {
+                            document.getElementById(id).style.backgroundColor = 'white';
+                        }
+                    }
+                    else if (n==2){
+                        if (lastnumber % 2 == 1){
+                            if (lastnumber == 11){
+                                var id2 = letter + (lastnumber -1);
+                            }
+                            else var id2 = letter + (lastnumber+1);
+                        }
+                        else{
+                            var id2 = letter + (lastnumber-1);
+                        }
+                        if ((document.getElementById(id).style.backgroundColor == 'green') || (document.getElementById(id2).style.backgroundColor == 'green')) ;
+                        else if ((document.getElementById(id).style.backgroundColor == 'grey') || (document.getElementById(id2).style.backgroundColor == 'grey')) ;
+                        else {
+                            document.getElementById(id).style.backgroundColor = 'white';
+                            document.getElementById(id2).style.backgroundColor = 'white';
+                        }
+                    }
+
+                    else if (n==3){
+                        if (lastnumber < 4){
+                            if((document.getElementById(letter+1).style.backgroundColor == 'green')|| (document.getElementById(letter+2).style.backgroundColor == 'green')||(document.getElementById(letter+3).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+1).style.backgroundColor == 'grey')|| (document.getElementById(letter+2).style.backgroundColor == 'grey')||(document.getElementById(letter+3).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+1).style.backgroundColor = 'white';
+                                document.getElementById(letter+2).style.backgroundColor = 'white';
+                                document.getElementById(letter+3).style.backgroundColor = 'white';
+                            }
+                        }
+                        else if (lastnumber < 7){
+                            if((document.getElementById(letter+4).style.backgroundColor == 'green')|| (document.getElementById(letter+5).style.backgroundColor == 'green')||(document.getElementById(letter+6).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+4).style.backgroundColor == 'grey')|| (document.getElementById(letter+5).style.backgroundColor == 'grey')||(document.getElementById(letter+6).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+4).style.backgroundColor = 'white';
+                                document.getElementById(letter+5).style.backgroundColor = 'white';
+                                document.getElementById(letter+6).style.backgroundColor = 'white';
+                            }
+                        }
+                        else if (lastnumber < 10){
+                            if((document.getElementById(letter+7).style.backgroundColor == 'green')|| (document.getElementById(letter+8).style.backgroundColor == 'green')||(document.getElementById(letter+9).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+7).style.backgroundColor == 'grey')|| (document.getElementById(letter+8).style.backgroundColor == 'grey')||(document.getElementById(letter+9).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+7).style.backgroundColor = 'white';
+                                document.getElementById(letter+8).style.backgroundColor = 'white';
+                                document.getElementById(letter+9).style.backgroundColor = 'white';
+                            }
+                        }
+                        else {
+                            if((document.getElementById(letter+9).style.backgroundColor == 'green')|| (document.getElementById(letter+10).style.backgroundColor == 'green')||(document.getElementById(letter+11).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+9).style.backgroundColor == 'grey')|| (document.getElementById(letter+11).style.backgroundColor == 'grey')||(document.getElementById(letter+11).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+9).style.backgroundColor = 'white';
+                                document.getElementById(letter+10).style.backgroundColor = 'white';
+                                document.getElementById(letter+11).style.backgroundColor = 'white';
+                            }
+                        }
+                    }
+
+                    else{
+                        if(lastnumber < 3){
+                            if((document.getElementById(letter+1).style.backgroundColor == 'green')|| (document.getElementById(letter+2).style.backgroundColor == 'green')||(document.getElementById(letter+3).style.backgroundColor == 'green')||(document.getElementById(letter+4).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+1).style.backgroundColor == 'grey')|| (document.getElementById(letter+2).style.backgroundColor == 'grey')||(document.getElementById(letter+3).style.backgroundColor == 'grey')||(document.getElementById(letter+4).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+1).style.backgroundColor = 'white';
+                                document.getElementById(letter+2).style.backgroundColor = 'white';
+                                document.getElementById(letter+3).style.backgroundColor = 'white';
+                                document.getElementById(letter+4).style.backgroundColor = 'white';
+                            }
+                        }
+                        else if (lastnumber < 7){
+                            if((document.getElementById(letter+3).style.backgroundColor == 'green')|| (document.getElementById(letter+4).style.backgroundColor == 'green')||(document.getElementById(letter+5).style.backgroundColor == 'green')||(document.getElementById(letter+6).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+3).style.backgroundColor == 'grey')|| (document.getElementById(letter+4).style.backgroundColor == 'grey')||(document.getElementById(letter+5).style.backgroundColor == 'grey')||(document.getElementById(letter+6).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+3).style.backgroundColor = 'white';
+                                document.getElementById(letter+4).style.backgroundColor = 'white';
+                                document.getElementById(letter+5).style.backgroundColor = 'white';
+                                document.getElementById(letter+6).style.backgroundColor = 'white';
+                            }
+                        }
+                        else if (lastnumber == 7){
+                            if((document.getElementById(letter+7).style.backgroundColor == 'green')|| (document.getElementById(letter+8).style.backgroundColor == 'green')||(document.getElementById(letter+9).style.backgroundColor == 'green')||(document.getElementById(letter+10).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+7).style.backgroundColor == 'grey')|| (document.getElementById(letter+8).style.backgroundColor == 'grey')||(document.getElementById(letter+9).style.backgroundColor == 'grey')||(document.getElementById(letter+10).style.backgroundColor == 'grey')) ;
+                            
+                            else {
+                                document.getElementById(letter+7).style.backgroundColor = 'white';
+                                document.getElementById(letter+8).style.backgroundColor = 'white';
+                                document.getElementById(letter+9).style.backgroundColor = 'white';
+                                document.getElementById(letter+10).style.backgroundColor = 'white';
+                            }
+                        }
+                        else {
+                            if((document.getElementById(letter+8).style.backgroundColor == 'green')|| (document.getElementById(letter+9).style.backgroundColor == 'green')||(document.getElementById(letter+10).style.backgroundColor == 'green')||(document.getElementById(letter+11).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+8).style.backgroundColor == 'grey')|| (document.getElementById(letter+9).style.backgroundColor == 'grey')||(document.getElementById(letter+10).style.backgroundColor == 'grey')||(document.getElementById(letter+11).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+11).style.backgroundColor = 'white';
+                                document.getElementById(letter+8).style.backgroundColor = 'white';
+                                document.getElementById(letter+9).style.backgroundColor = 'white';
+                                document.getElementById(letter+10).style.backgroundColor = 'white';
+                            }
+                        }
+                    }
+                }
+                else {
+                    if (n==1){
+                        if (document.getElementById(id).style.backgroundColor == 'green') ;
+                        else if (document.getElementById(id).style.backgroundColor == 'grey') ;
+                        else {
+                            document.getElementById(id).style.backgroundColor = 'white';
+                        }
+                    }
+                    else if (n==2){
+                        if (lastnumber % 2 == 1){
+                            var id2 = letter + (lastnumber+1);
+                        }
+                        else{
+                            var id2 = letter + (lastnumber-1);
+                        }
+                        if ((document.getElementById(id).style.backgroundColor == 'green') || (document.getElementById(id2).style.backgroundColor == 'green')) ;
+                        else if ((document.getElementById(id).style.backgroundColor == 'grey') || (document.getElementById(id2).style.backgroundColor == 'grey')) ;
+                        else {
+                            document.getElementById(id).style.backgroundColor = 'white';
+                            document.getElementById(id2).style.backgroundColor = 'white';
+                        }
+                    }
+
+                    else if (n==3){
+                        if (lastnumber == 1){
+                            if((document.getElementById(letter+1).style.backgroundColor == 'green')|| (document.getElementById(letter+2).style.backgroundColor == 'green')||(document.getElementById(letter+3).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+1).style.backgroundColor == 'grey')|| (document.getElementById(letter+2).style.backgroundColor == 'grey')||(document.getElementById(letter+3).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+1).style.backgroundColor = 'white';
+                                document.getElementById(letter+2).style.backgroundColor = 'white';
+                                document.getElementById(letter+3).style.backgroundColor = 'white';
+                            }
+                        }
+                        else if (lastnumber < 5){
+                            if((document.getElementById(letter+2).style.backgroundColor == 'green')|| (document.getElementById(letter+3).style.backgroundColor == 'green')||(document.getElementById(letter+4).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+2).style.backgroundColor == 'grey')|| (document.getElementById(letter+3).style.backgroundColor == 'grey')||(document.getElementById(letter+4).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+2).style.backgroundColor = 'white';
+                                document.getElementById(letter+3).style.backgroundColor = 'white';
+                                document.getElementById(letter+4).style.backgroundColor = 'white';
+                            }
+                        }
+                        else if (lastnumber < 8){
+                            if((document.getElementById(letter+5).style.backgroundColor == 'green')|| (document.getElementById(letter+6).style.backgroundColor == 'green')||(document.getElementById(letter+7).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+5).style.backgroundColor == 'grey')|| (document.getElementById(letter+6).style.backgroundColor == 'grey')||(document.getElementById(letter+7).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+7).style.backgroundColor = 'white';
+                                document.getElementById(letter+5).style.backgroundColor = 'white';
+                                document.getElementById(letter+6).style.backgroundColor = 'white';
+                            }
+                        }
+                        else if (lastnumber < 11){
+                            if((document.getElementById(letter+10).style.backgroundColor == 'green')|| (document.getElementById(letter+8).style.backgroundColor == 'green')||(document.getElementById(letter+9).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+10).style.backgroundColor == 'grey')|| (document.getElementById(letter+8).style.backgroundColor == 'grey')||(document.getElementById(letter+9).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+10).style.backgroundColor = 'white';
+                                document.getElementById(letter+8).style.backgroundColor = 'white';
+                                document.getElementById(letter+9).style.backgroundColor = 'white';
+                            }
+                        }
+                        else if (lastnumber < 14){
+                            if((document.getElementById(letter+11).style.backgroundColor == 'green')|| (document.getElementById(letter+12).style.backgroundColor == 'green')||(document.getElementById(letter+13).style.backgroundColor == 'green')) ;
+                            else {
+                                document.getElementById(letter+12).style.backgroundColor = 'white';
+                                document.getElementById(letter+13).style.backgroundColor = 'white';
+                                document.getElementById(letter+11).style.backgroundColor = 'white';
+                            }
+                        }
+                        else{
+                            if((document.getElementById(letter+14).style.backgroundColor == 'green')|| (document.getElementById(letter+12).style.backgroundColor == 'green')||(document.getElementById(letter+13).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+14).style.backgroundColor == 'grey')|| (document.getElementById(letter+12).style.backgroundColor == 'grey')||(document.getElementById(letter+13).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+12).style.backgroundColor = 'white';
+                                document.getElementById(letter+13).style.backgroundColor = 'white';
+                                document.getElementById(letter+14).style.backgroundColor = 'white';
+                            }
+                        }
+                    }
+
+                    else{
+                        if(lastnumber < 5){
+                            if((document.getElementById(letter+1).style.backgroundColor == 'green')|| (document.getElementById(letter+2).style.backgroundColor == 'green')||(document.getElementById(letter+3).style.backgroundColor == 'green')||(document.getElementById(letter+4).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+1).style.backgroundColor == 'grey')|| (document.getElementById(letter+2).style.backgroundColor == 'grey')||(document.getElementById(letter+3).style.backgroundColor == 'grey')||(document.getElementById(letter+4).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+1).style.backgroundColor = 'white';
+                                document.getElementById(letter+2).style.backgroundColor = 'white';
+                                document.getElementById(letter+3).style.backgroundColor = 'white';
+                                document.getElementById(letter+4).style.backgroundColor = 'white';
+                            }
+                        }
+                        else if (lastnumber < 7){
+                            if((document.getElementById(letter+7).style.backgroundColor == 'green')|| (document.getElementById(letter+8).style.backgroundColor == 'green')||(document.getElementById(letter+5).style.backgroundColor == 'green')||(document.getElementById(letter+6).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+7).style.backgroundColor == 'grey')|| (document.getElementById(letter+8).style.backgroundColor == 'grey')||(document.getElementById(letter+5).style.backgroundColor == 'grey')||(document.getElementById(letter+6).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+7).style.backgroundColor = 'white';
+                                document.getElementById(letter+8).style.backgroundColor = 'white';
+                                document.getElementById(letter+5).style.backgroundColor = 'white';
+                                document.getElementById(letter+6).style.backgroundColor = 'white';
+                            }
+                        }
+                        else if (lastnumber < 11){
+                            if((document.getElementById(letter+7).style.backgroundColor == 'green')|| (document.getElementById(letter+8).style.backgroundColor == 'green')||(document.getElementById(letter+9).style.backgroundColor == 'green')||(document.getElementById(letter+10).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+7).style.backgroundColor == 'grey')|| (document.getElementById(letter+8).style.backgroundColor == 'grey')||(document.getElementById(letter+9).style.backgroundColor == 'grey')||(document.getElementById(letter+10).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+7).style.backgroundColor = 'white';
+                                document.getElementById(letter+8).style.backgroundColor = 'white';
+                                document.getElementById(letter+9).style.backgroundColor = 'white';
+                                document.getElementById(letter+10).style.backgroundColor = 'white';
+                            }
+                        }
+                        else {
+                            if((document.getElementById(letter+11).style.backgroundColor == 'green')|| (document.getElementById(letter+12).style.backgroundColor == 'green')||(document.getElementById(letter+13).style.backgroundColor == 'green')||(document.getElementById(letter+14).style.backgroundColor == 'green')) ;
+                            else if((document.getElementById(letter+11).style.backgroundColor == 'grey')|| (document.getElementById(letter+12).style.backgroundColor == 'grey')||(document.getElementById(letter+13).style.backgroundColor == 'grey')||(document.getElementById(letter+14).style.backgroundColor == 'grey')) ;
+                            else {
+                                document.getElementById(letter+11).style.backgroundColor = 'white';
+                                document.getElementById(letter+12).style.backgroundColor = 'white';
+                                document.getElementById(letter+13).style.backgroundColor = 'white';
+                                document.getElementById(letter+14).style.backgroundColor = 'white';
+                            }
+                        }
+                    }
+                }
+            }
+
+            function SeatOnClick(id, n, space){
+                var letter = id.charAt(0);
+                var idx = finalSeat.indexOf(id);
+                if (id.length == 2){
+                    var lastnumber = id.charAt(id.length-1) * 1;
+                }
+                else var lastnumber = id.substr(id.length-2) * 1;
+
+                if ((space == '1관') || (space == '2관')){
+                    if (n==1){
+                        if (document.getElementById(id).style.backgroundColor == 'black'){
+                            document.getElementById(id).style.backgroundColor = 'green';
+                            finalSeat[SelectCount] = id;
+                            SelectCount += 1;
+                        }
+                        else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                            alert('이미 선택된 좌석입니다');
+                        }
+                        else {
+                            document.getElementById(id).style.backgroundColor= 'white';
+                            if (idx > -1) finalSeat.splice(idx, 1);
+                            if (SelectCount > 0) SelectCount -= 1;
+                        }
+                    }
+                    else if (n==2){
+                        if (lastnumber % 2 == 1){
+                            if (lastnumber == 11){
+                                var id2 = letter + (lastnumber -1);
+                            }
+                            else var id2 = letter + (lastnumber+1);
+                        }
+                        else{
+                            var id2 = letter + (lastnumber-1);
+                        }
+                        if ((document.getElementById(id).style.backgroundColor == 'black') || (document.getElementById(id2).style.backgroundColor == 'black')) {
+                            document.getElementById(id).style.backgroundColor = 'green';
+                            finalSeat[SelectCount] = id;
+                            SelectCount += 1;
+                            document.getElementById(id2).style.backgroundColor = 'green';
+                            finalSeat[SelectCount] = id2;
+                            SelectCount += 1;
+                        }
+                        else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                            alert('이미 선택된 좌석입니다');
+                        }
+                        else {
+                            if ((document.getElementById(id).style.backgroundColor == 'green') && (document.getElementById(id2).style.backgroundColor == 'green')){
+                                document.getElementById(id).style.backgroundColor= 'white';
+                                if (idx > -1) finalSeat.splice(idx, 1);
+                                if (SelectCount > 0) SelectCount -= 1;
+                                idx = finalSeat.indexOf(id2);
+                                document.getElementById(id2).style.backgroundColor= 'white';
+                                if (idx > -1) finalSeat.splice(idx, 1);
+                                if (SelectCount > 0) SelectCount -= 1;
+                            }
+                        }
+                    }
+
+                    else if (n==3){
+                        if (lastnumber < 4){
+                            if((document.getElementById(letter+1).style.backgroundColor == 'black')|| (document.getElementById(letter+2).style.backgroundColor == 'black')||(document.getElementById(letter+3).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+1).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+1;
+                                SelectCount += 1;
+                                document.getElementById(letter+2).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+2;
+                                SelectCount += 1;
+                                document.getElementById(letter+3).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+3;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+1).style.backgroundColor == 'green')&& (document.getElementById(letter+2).style.backgroundColor == 'green')&&(document.getElementById(letter+3).style.backgroundColor == 'green')){
+                                    document.getElementById(letter+1).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+1);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+2).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+2);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+3).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+3);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                }
+                            }
+                        }
+                        else if (lastnumber < 7){
+                            if((document.getElementById(letter+4).style.backgroundColor == 'black')|| (document.getElementById(letter+5).style.backgroundColor == 'black')||(document.getElementById(letter+6).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+4).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+4;
+                                SelectCount += 1;
+                                document.getElementById(letter+5).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+5;
+                                SelectCount += 1;
+                                document.getElementById(letter+6).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+6;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+4).style.backgroundColor == 'green')&& (document.getElementById(letter+5).style.backgroundColor == 'green')&&(document.getElementById(letter+6).style.backgroundColor == 'green')){
+                                    document.getElementById(letter+4).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+4);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+5).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+5);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+6).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+6);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                }
+                            }
+                        }
+                        else if (lastnumber < 10){
+                            if((document.getElementById(letter+7).style.backgroundColor == 'black')|| (document.getElementById(letter+8).style.backgroundColor == 'black')||(document.getElementById(letter+9).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+7).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+7;
+                                SelectCount += 1;
+                                document.getElementById(letter+8).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+8;
+                                SelectCount += 1;
+                                document.getElementById(letter+9).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+9;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+7).style.backgroundColor == 'green')&& (document.getElementById(letter+8).style.backgroundColor == 'green')&&(document.getElementById(letter+9).style.backgroundColor == 'green')){
+                                    document.getElementById(letter+7).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+7);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+8).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+8);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+9).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+9);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                }
+                            }
+                        }
+                        else {
+                            if((document.getElementById(letter+9).style.backgroundColor == 'black')|| (document.getElementById(letter+10).style.backgroundColor == 'black')||(document.getElementById(letter+11).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+9).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+9;
+                                SelectCount += 1;
+                                document.getElementById(letter+10).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+10;
+                                SelectCount += 1;
+                                document.getElementById(letter+11).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+11;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+9).style.backgroundColor == 'green')&& (document.getElementById(letter+10).style.backgroundColor == 'green')&&(document.getElementById(letter+11).style.backgroundColor == 'green')){
+                                    document.getElementById(letter+9).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+9);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+10).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+10);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+11).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+11);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                }
+                            }
+                        }
+                    }
+
+                    else{
+                        if(lastnumber < 3){
+                            if((document.getElementById(letter+1).style.backgroundColor == 'black')|| (document.getElementById(letter+2).style.backgroundColor == 'black')||(document.getElementById(letter+3).style.backgroundColor == 'black')||(document.getElementById(letter+4).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+1).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+1;
+                                SelectCount += 1;
+                                document.getElementById(letter+2).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+2;
+                                SelectCount += 1;
+                                document.getElementById(letter+3).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+3;
+                                SelectCount += 1;
+                                document.getElementById(letter+4).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+4;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+1).style.backgroundColor == 'green')&& (document.getElementById(letter+2).style.backgroundColor == 'green')&&(document.getElementById(letter+3).style.backgroundColor == 'green')&&(document.getElementById(letter+4).style.backgroundColor == 'green')) {
+                                    document.getElementById(letter+1).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+1);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+2).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+2);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+3).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+3);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+4).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+4);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                }
+                                
+                            }
+                        }
+                        else if (lastnumber < 7){
+                            if((document.getElementById(letter+3).style.backgroundColor == 'black')|| (document.getElementById(letter+4).style.backgroundColor == 'black')||(document.getElementById(letter+5).style.backgroundColor == 'black')||(document.getElementById(letter+6).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+3).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+3;
+                                SelectCount += 1;
+                                document.getElementById(letter+4).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+4;
+                                SelectCount += 1;
+                                document.getElementById(letter+5).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+5;
+                                SelectCount += 1;
+                                document.getElementById(letter+6).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+6;
+                                SelectCount += 1;
+                            }
+                            else {
+                                if((document.getElementById(letter+3).style.backgroundColor == 'green')&& (document.getElementById(letter+4).style.backgroundColor == 'green')&&(document.getElementById(letter+5).style.backgroundColor == 'green')&&(document.getElementById(letter+6).style.backgroundColor == 'green')) {
+                                    document.getElementById(letter+3).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+3);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+4).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+4);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+5).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+5);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+6).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+6);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                }
+                            }
+                        }
+                        else if (lastnumber == 7){
+                            if((document.getElementById(letter+7).style.backgroundColor == 'black')|| (document.getElementById(letter+8).style.backgroundColor == 'black')||(document.getElementById(letter+9).style.backgroundColor == 'black')||(document.getElementById(letter+10).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+7).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+7;
+                                SelectCount += 1;
+                                document.getElementById(letter+8).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+8;
+                                SelectCount += 1;
+                                document.getElementById(letter+9).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+9;
+                                SelectCount += 1;
+                                document.getElementById(letter+10).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+10;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+7).style.backgroundColor == 'green')&& (document.getElementById(letter+8).style.backgroundColor == 'green')&&(document.getElementById(letter+9).style.backgroundColor == 'green')&&(document.getElementById(letter+10).style.backgroundColor == 'green')) {
+                                    document.getElementById(letter+7).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+7);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+8).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+8);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+9).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+9);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+10).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+10);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                }
+                            }
+                        }
+                        else {
+                            if((document.getElementById(letter+8).style.backgroundColor == 'black')|| (document.getElementById(letter+9).style.backgroundColor == 'black')||(document.getElementById(letter+10).style.backgroundColor == 'black')||(document.getElementById(letter+11).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+8).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+8;
+                                SelectCount += 1;
+                                document.getElementById(letter+9).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+9;
+                                SelectCount += 1;
+                                document.getElementById(letter+10).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+10;
+                                SelectCount += 1;
+                                document.getElementById(letter+11).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+11;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+11).style.backgroundColor == 'green')&& (document.getElementById(letter+8).style.backgroundColor == 'green')&&(document.getElementById(letter+9).style.backgroundColor == 'green')&&(document.getElementById(letter+10).style.backgroundColor == 'green')) {
+                                    document.getElementById(letter+11).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+11);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+8).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+8);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+9).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+9);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+10).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+10);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    if (n==1){
+                        if (document.getElementById(id).style.backgroundColor == 'black'){
+                            document.getElementById(id).style.backgroundColor = 'green';
+                            finalSeat[SelectCount] = id;
+                            SelectCount += 1;
+                        }
+                        else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                        else {
+                            document.getElementById(id).style.backgroundColor= 'white';
+                            if (idx > -1) finalSeat.splice(idx, 1);
+                            if (SelectCount > 0) SelectCount -= 1;;
+                        }
+                    }
+                    else if (n==2){
+                        if (lastnumber % 2 == 1){
+                            var id2 = letter + (lastnumber+1);
+                        }
+                        else{
+                            var id2 = letter + (lastnumber-1);
+                        }
+                        if ((document.getElementById(id).style.backgroundColor == 'black') || (document.getElementById(id2).style.backgroundColor == 'black')) {
+                            document.getElementById(id).style.backgroundColor = 'green';
+                            finalSeat[SelectCount] = id;
+                            SelectCount += 1;
+                            document.getElementById(id2).style.backgroundColor = 'green';
+                            finalSeat[SelectCount] = id2;
+                            SelectCount += 1;
+                        }
+                        else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                        }
+                        else {
+                            if ((document.getElementById(id).style.backgroundColor == 'green') || (document.getElementById(id2).style.backgroundColor == 'green')){
+                                document.getElementById(id).style.backgroundColor= 'white';
+                                if (idx > -1) finalSeat.splice(idx, 1);
+                                if (SelectCount > 0) SelectCount -= 1;
+                                idx = finalSeat.indexOf(id2);
+                                document.getElementById(id2).style.backgroundColor= 'white';
+                                if (idx > -1) finalSeat.splice(idx, 1);
+                                if (SelectCount > 0) SelectCount -= 1;
+                            }
+                        }
+                    }
+
+                    else if (n==3){
+                        if (lastnumber == 1){
+                            if((document.getElementById(letter+1).style.backgroundColor == 'black')|| (document.getElementById(letter+2).style.backgroundColor == 'black')||(document.getElementById(letter+3).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+1).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+1;
+                                SelectCount += 1;
+                                document.getElementById(letter+2).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+2;
+                                SelectCount += 1;
+                                document.getElementById(letter+3).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+3;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+1).style.backgroundColor == 'green')&& (document.getElementById(letter+2).style.backgroundColor == 'green')&&(document.getElementById(letter+3).style.backgroundColor == 'green')){
+                                    document.getElementById(letter+1).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+1);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+2).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+2);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+3).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+3);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                }
+                            }
+                        }
+                        else if (lastnumber < 5){
+                            if((document.getElementById(letter+4).style.backgroundColor == 'black')|| (document.getElementById(letter+2).style.backgroundColor == 'black')||(document.getElementById(letter+3).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+4).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+4;
+                                SelectCount += 1;
+                                document.getElementById(letter+2).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+2;
+                                SelectCount += 1;
+                                document.getElementById(letter+3).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+3;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+4).style.backgroundColor == 'green')&& (document.getElementById(letter+2).style.backgroundColor == 'green')&&(document.getElementById(letter+3).style.backgroundColor == 'green')){
+                                    document.getElementById(letter+4).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+4);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+2).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+2);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+3).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+3);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                }
+                            }
+                        }
+                        else if (lastnumber < 8){
+                            if((document.getElementById(letter+5).style.backgroundColor == 'black')|| (document.getElementById(letter+6).style.backgroundColor == 'black')||(document.getElementById(letter+7).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+7).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+7;
+                                SelectCount += 1;
+                                document.getElementById(letter+5).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+5;
+                                SelectCount += 1;
+                                document.getElementById(letter+6).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+6;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+7).style.backgroundColor == 'green')&& (document.getElementById(letter+5).style.backgroundColor == 'green')&&(document.getElementById(letter+6).style.backgroundColor == 'green')){
+                                    document.getElementById(letter+7).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+7);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+5).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+5);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+6).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+6);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                }
+                            }
+                        }
+                        else if (lastnumber < 11){
+                            if((document.getElementById(letter+10).style.backgroundColor == 'black')|| (document.getElementById(letter+8).style.backgroundColor == 'black')||(document.getElementById(letter+9).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+10).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+10;
+                                SelectCount += 1;
+                                document.getElementById(letter+8).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+8;
+                                SelectCount += 1;
+                                document.getElementById(letter+9).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+9;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+7).style.backgroundColor == 'green')&& (document.getElementById(letter+8).style.backgroundColor == 'green')&&(document.getElementById(letter+9).style.backgroundColor == 'green')){
+                                    document.getElementById(letter+7).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+7);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+8).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+8);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+9).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+9);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                }
+                            }
+                        }
+                        else if (lastnumber < 14){
+                            if((document.getElementById(letter+11).style.backgroundColor == 'black')|| (document.getElementById(letter+12).style.backgroundColor == 'black')||(document.getElementById(letter+13).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+11).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+11;
+                                SelectCount += 1;
+                                document.getElementById(letter+12).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+12;
+                                SelectCount += 1;
+                                document.getElementById(letter+13).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+13;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+11).style.backgroundColor == 'green')&& (document.getElementById(letter+12).style.backgroundColor == 'green')&&(document.getElementById(letter+13).style.backgroundColor == 'green')){
+                                    document.getElementById(letter+11).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+11);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+12).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+12);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+13).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+13);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                }
+                            }
+                        }
+                        else{
+                            if((document.getElementById(letter+14).style.backgroundColor == 'black')|| (document.getElementById(letter+12).style.backgroundColor == 'black')||(document.getElementById(letter+13).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+14).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+14;
+                                SelectCount += 1;
+                                document.getElementById(letter+12).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+12;
+                                SelectCount += 1;
+                                document.getElementById(letter+13).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+13;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+14).style.backgroundColor == 'green')&& (document.getElementById(letter+12).style.backgroundColor == 'green')&&(document.getElementById(letter+13).style.backgroundColor == 'green')){
+                                    document.getElementById(letter+14).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+14);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+12).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+12);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                    document.getElementById(letter+13).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+13);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;;
+                                }
+                            }
+                        }
+                    }
+
+                    else{
+                        if(lastnumber < 5){
+                            if((document.getElementById(letter+1).style.backgroundColor == 'black')|| (document.getElementById(letter+2).style.backgroundColor == 'black')||(document.getElementById(letter+3).style.backgroundColor == 'black')||(document.getElementById(letter+4).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+1).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+1;
+                                SelectCount += 1;
+                                document.getElementById(letter+2).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+2;
+                                SelectCount += 1;
+                                document.getElementById(letter+3).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+3;
+                                SelectCount += 1;
+                                document.getElementById(letter+4).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+4;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+1).style.backgroundColor == 'green')&& (document.getElementById(letter+2).style.backgroundColor == 'green')&&(document.getElementById(letter+3).style.backgroundColor == 'green')&&(document.getElementById(letter+4).style.backgroundColor == 'green')) {
+                                    document.getElementById(letter+1).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+1);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+2).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+2);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+3).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+3);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+4).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+4);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                }
+                            }
+                        }
+                        else if (lastnumber < 7){
+                            if((document.getElementById(letter+7).style.backgroundColor == 'black')|| (document.getElementById(letter+8).style.backgroundColor == 'black')||(document.getElementById(letter+5).style.backgroundColor == 'black')||(document.getElementById(letter+6).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+5).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+5;
+                                SelectCount += 1;
+                                document.getElementById(letter+6).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+6;
+                                SelectCount += 1;
+                                document.getElementById(letter+7).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+7;
+                                SelectCount += 1;
+                                document.getElementById(letter+8).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+8;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+7).style.backgroundColor == 'green')&& (document.getElementById(letter+8).style.backgroundColor == 'green')&&(document.getElementById(letter+5).style.backgroundColor == 'green')&&(document.getElementById(letter+6).style.backgroundColor == 'green')) {
+                                    document.getElementById(letter+7).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+7);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+8).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+8);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+5).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+5);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+6).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+6);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                }
+                            }
+                        }
+                        else if (lastnumber < 11){
+                            if((document.getElementById(letter+7).style.backgroundColor == 'black')|| (document.getElementById(letter+8).style.backgroundColor == 'black')||(document.getElementById(letter+9).style.backgroundColor == 'black')||(document.getElementById(letter+10).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+7).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+7;
+                                SelectCount += 1;
+                                document.getElementById(letter+8).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+8;
+                                SelectCount += 1;
+                                document.getElementById(letter+9).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+9;
+                                SelectCount += 1;
+                                document.getElementById(letter+10).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+10;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+7).style.backgroundColor == 'green')&& (document.getElementById(letter+8).style.backgroundColor == 'green')&&(document.getElementById(letter+9).style.backgroundColor == 'green')&&(document.getElementById(letter+10).style.backgroundColor == 'green')) {
+                                    document.getElementById(letter+7).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+7);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+8).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+8);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+9).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+9);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+10).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+10);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                }
+                            }
+                        }
+                        else {
+                            if((document.getElementById(letter+11).style.backgroundColor == 'black')|| (document.getElementById(letter+12).style.backgroundColor == 'black')||(document.getElementById(letter+13).style.backgroundColor == 'black')||(document.getElementById(letter+14).style.backgroundColor == 'black')) {
+                                document.getElementById(letter+11).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+11;
+                                SelectCount += 1;
+                                document.getElementById(letter+12).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+12;
+                                SelectCount += 1;
+                                document.getElementById(letter+13).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+13;
+                                SelectCount += 1;
+                                document.getElementById(letter+14).style.backgroundColor = 'green';
+                                finalSeat[SelectCount] = letter+14;
+                                SelectCount += 1;
+                            }
+                            else if (document.getElementById(id).style.backgroundColor == 'grey'){
+                                alert('이미 선택된 좌석입니다');
+                            }
+                            else {
+                                if((document.getElementById(letter+11).style.backgroundColor == 'green')&& (document.getElementById(letter+12).style.backgroundColor == 'green')&&(document.getElementById(letter+13).style.backgroundColor == 'green')&&(document.getElementById(letter+14).style.backgroundColor == 'green')) {
+                                    document.getElementById(letter+11).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+11);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+12).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+12);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+13).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+13);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                    document.getElementById(letter+14).style.backgroundColor= 'white';
+                                    idx = finalSeat.indexOf(letter+14);
+                                    if (idx > -1) finalSeat.splice(idx, 1);
+                                    if (SelectCount > 0) SelectCount -= 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            var localStorage = window.localStorage;
+            var SI = 0;
+            for (var j = 0; j <= localStorage.length - 1 ; j++) {  // 로컬 스토리지
+                var k = localStorage.key(j);
+                if (k == false) {
+                    SI = j; 
+                }
+            }
+
+            function finalbooking(finalDate, finalTitle, finalTime, finalSpace, attendance, money){
+                if ( localStorage.length == 10){
+                    alert('영화 예매는 최대 10개까지 가능합니다. 예매 내역을 확인해주세요.');
+                    return
+                }
+                var result = confirm("결제 금액은 " + money*SelectCount + "원 입니다. \n예매를 진행하시겠습니까?");
+                if (result){
+                    alert('예매가 완료되었습니다.');
+                    var booking = finalDate + '|'+ finalTitle + '|'+finalTime +'|'+ finalSpace +'|'+ SelectCount +'명'+'|';
+                    for (var i in finalSeat){
+                        booking += finalSeat[i] +' '; 
+                    }
+                    localStorage.setItem(SI, booking);
+                    console.log(SI, booking);
+                    window.location.href = 'bookinglist.html';
+                }
+            }
+
+
+        </script>
+
+    </body>
+</html>

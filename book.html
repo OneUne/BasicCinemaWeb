@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title>명보 시네마 | 예매</title>
+		<link rel="stylesheet" type="text/css" href="style-size.css" />
+		<link rel="stylesheet" type="text/css" href="style-layout.css" />
+		<link rel="stylesheet" type="text/css" href="style-presentation.css" />
+	</head>
+
+	<body id="book">
+		<div class="head"> 영화 티켓 & 매점 이용권 구입 </div> <br>
+		<p>1. 이용하고자 하시는 날짜와 시간을 알려 주세요.</p>
+		<form action="">
+			<fieldset>
+				<legend>이용 날짜 및 시간 선택</legend>
+				<input type="date" name="r_date" value="연도-월-일" min="2020-05-12" max="2020-05-26" />
+				<input type="time" name="r_time" min="08:00" max="24:00" /> <br>
+			</fieldset>
+
+			<p>2. 구매를 원하시는 품목과 수량을 알려 주세요.</p>
+
+			<fieldset>
+				<legend>구매 품목 및 수량 선택</legend>
+				<br>
+				<table>
+					<thead>
+						<tr>
+							<th> 구매 품목 </th>
+							<th> 가격 </th>
+							<th> 수량 </th>
+							<th> 합계 </th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td> 일반 </td>
+							<td> 7,000원 </td>
+							<td> <input type="text" size="2" value="0" /> </td>
+							<td> <input type="text" size="6" value="0" /> 원</td>
+						</tr>
+						<tr>
+							<td> 일반 조조 / 학생
+							<td> 5,000원 </td>
+							<td> <input type="text" size="2" value="0" /> </td>
+							<td> <input type="text" size="6" value="0" /> 원</td>
+						</tr>
+						<tr>
+							<td> 학생 조조 </td>
+							<td> 4,000원 </td>
+							<td> <input type="text" size="2" value="0" /> </td>
+							<td> <input type="text" size="6" value="0" /> 원</td>
+						</tr>
+						<tr>
+							<td> 매점 10000원 이용권 </td>
+							<td> 9,500원 </td>
+							<td> <input type="text" size="2" value="0" /> </td>
+							<td> <input type="text" size="6" value="0" /> 원</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th> 합계 </th>
+							<td> &nbsp; </td>
+							<td> <input type="text" size="2" value="0" /> </td>
+							<td> <input type="text" size="6" value="0" /> 원</td>
+						</tr>
+					</tfoot>
+				</table> <br />
+			</fieldset> <br>
+			<div class="right">
+				<input type="button" value="합계계산" />
+				<input type="reset" value="초기화" />
+				<input type="submit" value="구매하기" />
+			</div>
+		</form>
+
+	</body>
+
+</html>

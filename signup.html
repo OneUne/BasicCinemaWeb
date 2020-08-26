@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>명보 시네마 | 회원가입</title>
+	<link rel="stylesheet" type="text/css" href="style-size.css"/>
+	<link rel="stylesheet" type="text/css" href="style-layout.css"/>
+	<link rel="stylesheet" type="text/css" href="style-presentation.css"/>
+</head>
+<body id="signup">
+	<form>	  
+		<fieldset>
+		<legend>회원가입</legend>
+		<span>사용자 아이디</span>
+		<input id="userid" name="u_id" type="text"/>
+		<input id="dup_check" type="button" value="중복체크"/><br/>
+		<span>비밀번호</span> <input id="pw1" name="u_pw1" type="password"><br/>
+		<span>비밀번호 확인</span> <input id="pw2" name="u_pw2" type="password"><br/>
+		<span>이름</span> <input id="username" name="u_name" type="text"><br/>
+		<span>전화번호</span> <input id="usertel" name="u_tel" type="tel"
+			  placeholder="01*-000(0)-0000" pattern="[0][1][0-9]-[0-9]{3,4}-[0-9]{4}" /> <br/>
+		<span>이메일</span> <input id="useremail" name="u_email" type="email" ><br/>
+		<span>생일</span> <input id="userbday" name="u_bday" type="date"/><br/>
+		<span>연령대</span>
+		<select name="ages">
+			<option value="10s">10대 이하</option>
+			<option value="20s">20대</option>
+			<option value="30s">30대</option>
+			<option value="40s">40대</option>
+			<option value="50s">50대 이상</option>
+		</select><br/>
+		<span>선호 영화 장르</span>
+		<label>드라마
+		<input type="checkbox" value="drama"" name="interest"></label>
+		<label>액션
+		<input type="checkbox" value="action" name="interest"></label>
+		<label>공포/스릴러
+		<input type="checkbox" value="thriller" name="interest"></label>
+		<label>SF/판타지
+		<input type="checkbox" value="SF"" name="interest"></label>
+		<label>애니메이션
+		<input type="checkbox" value="anime"" name="interest"></label>
+		<label>기타
+		<input type="checkbox" value="etc"" name="interest"></label>
+		<br/>
+		<span> 고객 의견</span>
+		<textarea cols="30" rows="5" placeholder="원하는 상영작이나 시간, 혹은 극장에 대해 바라는 것이 있다면 적어 주세요."></textarea>
+		<br>
+		<span>수신 동의</span>
+		<label>
+		<input type="checkbox" value="drama"" name="interest">
+		이메일로 상영영화정보, 이벤트 등 메시지를 수신하겠습니다. </label>
+		<label>
+			<input type="checkbox" value="drama"" name="interest">
+			문자로 상영영화정보, 이벤트 등 메시지를 수신하겠습니다. </label>
+		</fieldset>
+		<br>
+		<div class="right">
+			<input id="signup_button" type="submit" value="회원가입" />
+			<input id="reset2" type="reset" value="취소" />
+		</div>
+	</form> 
+</body>
+</html>

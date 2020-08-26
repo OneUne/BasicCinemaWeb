@@ -1,0 +1,50 @@
+/* style-presentaion.css */
+
+body {font-size: 0.75em; line-height: 1.2em; }
+img { border: none; }
+.top { text-align: left; background-color: #ffc65b }
+.wrap { text-align: left; }
+a { text-decoration: none; color: black; font-weight:bold; }
+nav { background-color: #097400; }
+nav ul { list-style: none; font-family: Verdana, Geneva, sans-serif; font-size: 14px; font-weight: bold; color: #ff0099; }
+nav a { text-decoration: none; color: white; border-style: hidden hidden solid hidden; border-color: transparent; }
+nav a:hover { border-color: white; color: #ffc65b; }
+input { color: blue; }
+input:focus { background-color: skyblue;}
+textarea:focus { background-color: skyblue;}
+
+header .right a:hover { color: white; }
+
+footer #copyright { font-family: consolas; } 
+footer #SNS a { text-decoration: none; }
+
+#login, #signup, #book { background-color: whitesmoke; }
+
+#book .head { color: black;font-size: 20px; font-weight: bolder; background-color: green;
+    color: #ffffff;
+    text-shadow: 2px 8px 6px rgba(0,0,0,0.2), 0px -3px 20px rgba(255,255,255,0.4); 
+    padding: 20px 0px;}
+#book table { border-collapse: collapse; }
+#book table td, th{ text-align: center; }
+#book table td, th, tr{ border: 1px solid silver; }
+
+#bookingseats {text-align:center;}
+#bookingseats table{width:250px; height:150px; text-align:center; border-radius:10px; border-spacing:10px;}
+#bookingseats table td {border-radius:10px; }
+
+.aerialview { background-image: url(./images/aerialview.jpg); }
+
+.introduce { font-family: arial; background-color: #f0f0f0; background-image: url(./images/cloud.jpg); }
+.introduce .head { font-size: 20px; font-weight: bolder; }
+.introduce a:hover { color: white;}
+.introduce dd { font-size: 16px; list-style-type: none; line-height: 1.5em; font-weight: normal}
+
+.movie_info { font-family: arial; background-color: #f0f0f0; background-image: url(./images/cloud.jpg); background-position: 0px 0px;}
+.movie_info .head { font-size: 16px; font-weight: bolder; }
+.movie_info ul li { font-size: 12px; list-style-type: none; }
+.movie_info ul li img:hover { border: groove; border-color: lightgray; border-width: 5px; }
+
+.runningfilms {color:#f0f0f0; background: rgba(0, 0, 0, 0.8); visibility: hidden; border-radius:5px;}
+.runningfilm_info li:hover .runningfilms{opacity: 1; visibility: visible;}
+.buttons {color: green; background: white; border:green; padding:5px; cursor:pointer; border-radius: 10px; size:10px;}
+.musiclist ul li { font-size: 12px; font-weight: bold; text-shadow: 0.2em 0.2em 0.2em white;}

@@ -1,0 +1,30 @@
+.top {min-height:150px; }
+.wrap {width:80%;}
+
+header { height: 80px; width:100%; }
+header a { width: 70%;}
+nav { width: 70% }
+nav a { height:20px; }
+footer { height:70px; }
+
+#logo {height:50px; width:100px;}
+#login fieldset span { width: 80px; }
+#signup fieldset span { width: 90px; }
+#book table td, th{ width: 150px; height: 30px; }
+
+.introduce { height: 462px; }
+.introduce ul li { width: 150px; height: 180px; }
+.introduce ul li img { height: 120px; }
+.introduce ul li audio, video { width: 330px; }
+.introduce ul li video { height: 120px; }
+
+.movie_info { height: 462px; }
+.movie_info ul li { width: 150px; height: 180px; }
+.movie_info ul li img { height: 120px; }
+.movie_info ul li audio, video { width: 330px; }
+.movie_info ul li video { height: 120px; }
+
+.runningfilm_info {height: 230px;}
+.runningfilms {width: 130px; height:180px;}
+.runningfilm_info li img {width: 140px; height: 190px;}
+.musiclist ul li { width: 530px; }

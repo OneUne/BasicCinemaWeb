@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <title>명보 시네마 | 예매 확인</title>
+        <link rel="stylesheet" type="text/css" href="style-size.css" />
+        <link rel="stylesheet" type="text/css" href="style-layout.css" />
+        <link rel="stylesheet" type="text/css" href="style-presentation.css" />
+    </head>
+
+    <body id="book" onload="pageload();">
+
+        <div class = "head"> &nbsp; 나의 예매 내역 </div> <br>
+
+        <div style="width:47%; display:inline-block; padding:8px; border:double" id = "bookingList"></div>
+        <div style="width:47%; display:inline-block; float:right; position:relative; padding:8px; border:double" id = "bookingList2"></div><br>
+            
+        </div>
+        <p class="head"> &nbsp; 예매 확인 및 취소 </p>
+        <div style="background-color:#76bb87; padding:8px;">
+            <strong>영화 선택: </strong><select id="movieList" style="width:200px; padding:5px;" onclick="viewContent()">
+            </select><br><br>
+            <strong>상세 예매 내역 </strong><span id="comment">&nbsp;</span> <br><br>
+            
+            <input type="button" value="전체 예매 취소" onclick="ClearAll()" class="buttons" style="float:right; ">
+            <input type="button" value="예매 취소" onclick="RemoveItem()" class="buttons" style="float:right; "><br><br></div>
+
+        <script type="text/javascript">
+            var localStorage = window.localStorage;        // 로컬 스토리지
+            var bookingList =  document.getElementById("bookingList");
+            var bookingList2 =  document.getElementById("bookingList2");
+            var itemList = document.getElementById("movieList");
+            var comment = document.getElementById("comment");
+            var title = document.getElementById("title");
+            var content = document.getElementById("content");
+            var select = document.getElementById("movieList");
+
+            if (!localStorage) {
+                alert("로컬스토리지를 지원하지 않습니다.");
+            }
+
+            function pageload() {
+                bookingList.innerHTML = "";
+                bookingList2.innerHTML = "";
+                itemList.innerHTML = "";  // 목록 clear    
+                comment.innerHTML = "";
+                // 스토리지의 데이터를 리스트에 추가 
+                if (localStorage.length == 0){
+                    bookingList.style.width = '97%';
+                    bookingList2.style.visibility = 'hidden';
+                    bookingList.innerHTML = '예매 내역이 존재하지 않습니다.';
+                }
+                for (var j = 0; j <= localStorage.length - 1 ; j++) {  // 로컬 스토리지
+                    console.log(localStorage.key('1'));
+                    var i = localStorage.key(j);
+                    console.log(i, j);
+                    if (i) {
+                        var bookinginfo = localStorage.getItem(i);
+                        var listtext = j+1 +'. &emsp;' + bookinginfo.split('|')[0].split('-')[0] + '년 ' +  bookinginfo.split('|')[0].split('-')[1] + '월 '+ bookinginfo.split('|')[0].split('-')[2] +'일 | ' + bookinginfo.split('|')[1] + ' | ' + bookinginfo.split('|')[2] +'<br>';
+                        if(j <= 4){
+                            bookingList.innerHTML += listtext; 
+                            bookingList.style.width = '97%';
+                            bookingList2.style.visibility = 'hidden';
+                        }
+                        else {
+                            if (j == 10) listtext = j +'.&nbsp;&ensp;' + bookinginfo.split('|')[0].split('-')[0] + '년 ' +  bookinginfo.split('|')[0].split('-')[1] + '월 '+ bookinginfo.split('|')[0].split('-')[2] +'일 | ' + bookinginfo.split('|')[1] + ' | ' + bookinginfo.split('|')[2] +'<br>';
+                            bookingList2.innerHTML += listtext; 
+                            bookingList.style.width = '47%';
+                            bookingList2.style.visibility = 'visible';
+                        }
+                        var optiontext = bookinginfo.split('|')[0].split('-')[1]+'/'+bookinginfo.split('|')[0].split('-')[2]+ '  ' + bookinginfo.split('|')[1]+ '  (' + bookinginfo.split('|')[2] +')';
+                        itemList.options[itemList.options.length] = new Option(optiontext, i, false, false);
+                    }
+                   
+                }
+            }
+
+            function SaveItem() {// 스토리지에 저장
+                localStorage.setItem(title.value, content.value);// 로컬 스토리지
+                pageload();
+            }
+            function RemoveItem() {// 선택한 항목을 스토리지에서 삭제
+                var option_value = select.options[select.selectedIndex].value;
+                localStorage.removeItem(option_value);// 로컬스토리지
+                pageload();
+            }
+            function ClearAll() {// 스토리지의 데이터 모두 삭제
+                localStorage.clear();// 로컬스토리지
+                pageload();
+            }
+            function viewContent() {// 선택한 영화의 한줄소개 보기
+                var option_value = select.options[select.selectedIndex].value;
+                var content = localStorage.getItem(option_value);
+                comment.innerHTML = '<br><br>'+'날짜&nbsp;&nbsp; : ' + content.split('|')[0].split('-')[0] + '년 ' +  content.split('|')[0].split('-')[1] + '월 '+ content.split('|')[0].split('-')[2] +'일 <br>' +
+                                    '시간&nbsp;&nbsp; : ' + content.split('|')[2] + '<br>' +
+                                    '영화&nbsp;&nbsp; : ' + content.split('|')[1] + '<br>' +
+                                    '상영관: ' + content.split('|')[3] + '<br>' +
+                                    '인원&nbsp;&nbsp; : ' + content.split('|')[4] + '<br>' +
+                                    '좌석&nbsp;&nbsp; : ' + content.split('|')[5] + '<br>' ;
+            }
+        </script>
+    </body>
+
+</html>

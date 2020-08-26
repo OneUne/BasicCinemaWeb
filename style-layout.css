@@ -1,0 +1,39 @@
+/* style-layout.css */
+
+body { margin: 0; padding: 0; line-height: 1.2em; font-size: 0.75em; line-height: 1.2em; }
+hr { clear: both; }
+nav { margin: 30px 0 0 -100px; float: left; padding-right:50px} 
+nav ul li { float: left; margin: 0 5px; list-style: none; }
+nav a { display: block; padding: 5px; }
+
+.top {margin-right: auto; margin-left: auto; }
+.wrap { margin: 0; margin-right: auto; margin-left: auto; }
+.left { float: left; }
+.right { float: right; }
+.clear { clear: both; }
+
+header {vertical-align: middle; }
+article { margin: 5px 0 10px 10%; }
+footer #copyright { margin: 10px 0 20px 10%; float: left; }
+footer #SNS { margin: 10px 15% 0 0 ; float: right; }
+
+#logo { float: left; vertical-align: middle; margin: 30px 0 50px 10% }
+#login { margin: 30px; }
+#login fieldset span { display: inline-block; }
+#signup { margin: 30px; }
+#signup fieldset span { display: inline-block; vertical-align: middle; }
+#signup fieldset input { vertical-align: middle; }
+#book { margin: 30px; }
+
+.introduce { margin: 10px; padding: 5px; }
+.introduce .head { margin: 15px 0 0 10px; } 
+.introduce iframe { margin: 0 20%;}
+.introduce ul li { float: left; margin: 5px 5px 10px 5px; list-style-type: none; }
+
+.movie_info { margin: 10px; padding: 5px; }
+.movie_info .head { margin: 15px 0 0 10px; } 
+.movie_info ul li { float: left; margin: 5px 5px 10px 5px; list-style-type: none; }
+
+.runningfilms {position:absolute; top:-7px; bottom:0; left:0; right:0; margin-left: 5px;} 
+.runningfilm_info li {position:relative; float:left; }
+.runningfilm_info ul li { margin: 5px 5px 10px 5px; list-style-type: none; }
