@@ -18,9 +18,12 @@ HTML, CSS, Java Script의 기초만을 사용해 기타 프레임 워크나 jQue
 학습용으로 도움이 되셨으면 좋겠습니다.
 기타 피드백을 주셔도 좋습니다.
 
+## 미리보기
+
 ### main.html
 
 ![image](https://user-images.githubusercontent.com/61937858/109409962-32614900-79da-11eb-8272-7a056566daf2.png)
+
 
 ### 예매하기 페이지
 
@@ -29,9 +32,11 @@ HTML, CSS, Java Script의 기초만을 사용해 기타 프레임 워크나 jQue
 - 각 영화 클릭 시 해당 날짜 및 시간의 영화 상영 정보 제공
 - JS에 기록된 영화 상영 정보와 검색한 날짜, 시간이 일치하지 않으면 알림
 
+
 ![image](https://user-images.githubusercontent.com/61937858/109410113-4e191f00-79db-11eb-893e-2811a4307a15.png)
 - 선택 인원 별 좌석 자동 선택 기능
 - 예매하기 버튼 클릭시 총 결제 금액 확인 알림 제공
+
 
 ![image](https://user-images.githubusercontent.com/61937858/109410155-959fab00-79db-11eb-87bc-4921eb4eacf6.png)
 - 예매 완료 후 예매 확인 및 취소 가능
